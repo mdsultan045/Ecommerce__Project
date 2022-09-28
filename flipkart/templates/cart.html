@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Cart{% endblock title %}
+{% load cart_filter %}
+
+{% block content %}
+<div class="container">
+
+  <table class="table table-success table-striped"style="text-align:center">
+    <tr>
+        <th>Sno.</th>
+        <th>Product Image</th>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+    </tr>
+    {% for pro_item in filtered_product %}
+    <tr>
+      <td>{{forloop.counter}}</td>
+      <td><img src="{{pro_item.pro_image.url}}" alt="" height = 90 width = 90></td>
+      <td>{{pro_item.product_name}}</td>
+      <td>Rs. {{pro_item.price}}</td>
+      <td>{{pro_item|cartquantity:request.session.cart}}</td>
+      <td>Rs. {{pro_item|Total_price:request.session.cart}}</td>
+    </tr>
+
+    {% endfor %}
+      <tr>
+        <td colspan = 5>
+          <h3>
+            Payable Amount:-
+          </h3>
+        </td>
+        <td>
+          <strong>
+                  Rs.{{filtered_product|payable_price:request.session.cart}}
+          </strong>
+          
+        </td>
+      </tr>
+        <tr>
+                  <td colspan= 6>
+                      <div colspan=6 class = "float-end"><button class = "btn btn-success" data-bs-toggle="modal" data-bs-target="#checkout">Checkout</button></div>
+                      </td>
+            </tr>
+    
+    </table>
+</div>
+
+<div class="modal fade" id="checkout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="example">Checkout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" action="{% url 'checkout' %}" method = "post" >
+          {% csrf_token %}
+          <div class="row">
+  <div class="col-12">
+    <label for="address">Address</label>
+    <input type="text" class="form-control" placeholder="enter your address"name= "address">
+  </div>
+  <div class="col-12">
+    <label for="mobile">Mobile no.</label>
+    <input type="text" class="form-control"  placeholder="enter your mobile" name = "mobile">
+  </div>
+</div>
+    <input type="submit" value = "checkout" class = "btn btn-success">
+        </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

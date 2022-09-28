@@ -1,0 +1,158 @@
+{% extends 'base.html' %} {% block title %} Home {% endblock title %}
+{% load static %}
+{% load cart_filter %}
+{% block content %}
+<div class="conatiner my-3 border">
+
+    <div class="row">
+        <div class="col">
+            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="{% static 'images/a.webp' %}" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static 'images/b.webp' %}" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static 'images/c.webp' %}" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static 'images/d.webp' %}" class="d-block w-100" alt="...">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+        </div>
+    </div>
+    <img class="KJjFO0 _3DIhEh" src="https://rukminim1.flixcart.com/fk-p-flap/1000/1000/image/0560edaa061d355c.jpg?q=50" alt="d" width=100%>
+{% if error %}
+
+<div class="modal" id="staticBackdrop" data-bs-backdrop="static" 
+data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" 
+aria-hidden="true" style="display: block;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h3>{{error}}</h3>
+            </div>
+            <div class="modal-footer">
+                <form action="{% url 'home' %}" method = "post">
+                    {% csrf_token %}
+            <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Ok</button>
+                 {% comment %} <button type="button" class="btn btn-primary">OK</button> {% endcomment %}
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+
+
+
+</div>
+
+
+
+
+
+
+
+    <div class="row">
+        {% comment %} it will show all categories {% endcomment %}
+        <div class="col-lg-3">
+             <ul class="list-group">
+                  {% for cate in cat %}
+                      <li class="list-group-item " aria-current="true">
+                            <a href="?cate_id={{cate.id}}">{{cate.name}}</a>
+                      </li>
+                  {% endfor %}
+            </ul>
+        </div>
+
+        {% comment %} it will show all products {% endcomment %}
+        <div class="col-9 d-flex flex-wrap" style= "overflow:scroll; height:500px;">
+            {% for product in pro %}
+ 
+            <div class="card mx-3 my-3" style="width: 16rem;">
+                <img src="{{product.pro_image.url}}" class="card-img-top" alt="..." height=300>
+                <div class="card-body">
+                    <h5 class="card-title">{{product.product_name}}</h5>
+                     <p class="card-text">{{product.desc}}</p>
+                     <h3 class="card-text">Rs. {{product.price}}</h3>
+                    {% comment %} <a href="#" class="btn btn-primary">Add to Cart</a> {% endcomment %}
+                </div>
+            
+            
+
+              <div class="card-footer text-center">
+                <div class="row">
+
+                    {% if product|is_exist_in_cart:request.session.cart %}
+                        <div class="row">
+                            <div class="col-2">
+                                 <form action="#{{product.id}}" method = "post">
+                                {% csrf_token %}
+                                <input type="text" name = "cartid" value="{{product.id}}" hidden>
+                                <input type="text" name = "minus" value="{{product.id}}" hidden>      
+                                <button type ="submit" class="btn btn-primary">-</button>
+                            </form>
+
+                            </div>
+                            <div class="col-8">
+                                    {{product|cartquantity:request.session.cart}}
+
+                            </div>
+                            <div class="col-2">
+                                <form action="#{{product.id}}" method = "post">
+                                {% csrf_token %}
+                                <input type="text" name = "cartid" value="{{product.id}}" hidden>      
+                                <button type ="submit" class="btn btn-primary">+</button>
+                            </form>
+                            </div>
+                        </div>
+                    {% else %}
+
+                        <div class="col">
+                            <form action="#{{product.id}}" method = "post">
+                                {% csrf_token %}
+                                <input type="text" name = "cartid" value="{{product.id}}" hidden>      
+                                <button type ="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+
+                        </div>
+                        {% endif %}
+                </div>
+                
+
+              </div>
+            </div>
+            {% endfor %} 
+
+        </div>
+    </div>
+
+
+    {% endif %}
+</div>
+{% endblock content %}
+
+
