@@ -1,9 +1,12 @@
+
+
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+from rest_framework import routers, serializers, viewsets
 # Create your views here.
 from .models import *
-
+from .serializers import ecomserializer
 from django.contrib.auth.hashers import check_password, make_password
 
 
@@ -147,3 +150,8 @@ def Order_Dtls(request):
     for i in fetch_order:
         tp = tp+(i.price * i.quantity)
     return render(request, 'order.html', {'fetch_dtls': fetch_order, 'tp': tp})
+
+
+class serializerview(viewsets.ModelViewSet):
+    queryset = Registration.objects.all()
+    serializer_class = ecomserializer
